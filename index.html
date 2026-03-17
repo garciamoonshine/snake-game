@@ -3,8 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Snake Game</title>
+  <title>🐍 Snake Game</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    .skin-selector { display:flex; gap:8px; justify-content:center; margin:8px 0; flex-wrap:wrap; }
+    .skin-btn { padding:4px 10px; border:2px solid #555; border-radius:20px; background:#1a1a2e; color:#ccc; cursor:pointer; font-size:12px; transition:all 0.2s; }
+    .skin-btn.active, .skin-btn:hover { border-color:#4ecca3; color:#4ecca3; }
+    .skin-btn[data-skin="fire"].active { border-color:#ff6b35; color:#ff6b35; }
+    .skin-btn[data-skin="ice"].active { border-color:#00d4ff; color:#00d4ff; }
+    .skin-btn[data-skin="neon"].active { border-color:#ff00ff; color:#ff00ff; }
+    .skin-btn[data-skin="gold"].active { border-color:#ffd700; color:#ffd700; }
+    #combo { color:#ffd700; font-weight:bold; font-size:13px; min-height:18px; text-align:center; }
+    @keyframes floatUp { from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(-40px)} }
+  </style>
 </head>
 <body>
   <div id="game-container">
@@ -15,6 +26,14 @@
         <span>High Score: <span id="high-score">0</span></span>
         <span>Level: <span id="level">1</span></span>
       </div>
+      <div id="combo"></div>
+    </div>
+    <div class="skin-selector">
+      <button class="skin-btn active" data-skin="classic">🟢 Classic</button>
+      <button class="skin-btn" data-skin="fire">🔥 Fire</button>
+      <button class="skin-btn" data-skin="ice">❄️ Ice</button>
+      <button class="skin-btn" data-skin="neon">💜 Neon</button>
+      <button class="skin-btn" data-skin="gold">⭐ Gold</button>
     </div>
     <canvas id="gameCanvas" width="400" height="400"></canvas>
     <div id="controls">
@@ -23,8 +42,8 @@
       <button id="restartBtn" disabled>Restart</button>
     </div>
     <div id="instructions">
-      <p>Use arrow keys or WASD to control the snake</p>
-      <p>Eat food to grow and earn points</p>
+      <p>Arrow keys / WASD to move &nbsp;|&nbsp; ⭐ Golden food = 50× bonus!</p>
+      <p>Quick combos multiply your score. Choose a skin above!</p>
     </div>
   </div>
   <div id="game-over-modal" class="hidden">
@@ -34,6 +53,9 @@
       <button id="playAgainBtn">Play Again</button>
     </div>
   </div>
+  <script src="particles.js"></script>
+  <script src="sounds.js"></script>
+  <script src="touch.js"></script>
   <script src="game.js"></script>
 </body>
 </html>
