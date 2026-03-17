@@ -15,6 +15,8 @@
     .skin-btn[data-skin="gold"].active { border-color:#ffd700; color:#ffd700; }
     #combo { color:#ffd700; font-weight:bold; font-size:13px; min-height:18px; text-align:center; }
     @keyframes floatUp { from{opacity:1;transform:translateY(0)} to{opacity:0;transform:translateY(-40px)} }
+    #ai-banner { text-align:center; font-size:11px; color:#4ecca3; opacity:0.7; margin-top:4px; }
+    #game-over-art { display:block; margin:8px auto; border-radius:8px; width:80px; height:80px; object-fit:cover; }
   </style>
 </head>
 <body>
@@ -36,6 +38,7 @@
       <button class="skin-btn" data-skin="gold">⭐ Gold</button>
     </div>
     <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div id="ai-banner">🎨 Backgrounds powered by Pollinations AI</div>
     <div id="controls">
       <button id="startBtn">Start Game</button>
       <button id="pauseBtn" disabled>Pause</button>
@@ -49,13 +52,41 @@
   <div id="game-over-modal" class="hidden">
     <div class="modal-content">
       <h2>Game Over!</h2>
+      <img id="game-over-art" src="" alt="AI Game Over Art" style="display:none">
       <p>Your Score: <span id="final-score">0</span></p>
       <button id="playAgainBtn">Play Again</button>
     </div>
   </div>
+  <script src="pollinations.js"></script>
   <script src="particles.js"></script>
   <script src="sounds.js"></script>
   <script src="touch.js"></script>
   <script src="game.js"></script>
+  <script>
+    // Inject AI background into canvas when skin changes
+    document.querySelectorAll('.skin-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const skin = btn.dataset.skin;
+        const canvas = document.getElementById('gameCanvas');
+        if (skinImages[skin]) {
+          // Store for game.js to draw as background
+          window.currentBgImage = skinImages[skin];
+        } else {
+          loadPollinationsImage(skinPrompts[skin] || 'pixel art game background', 400, 400, 42)
+            .then(img => { skinImages[skin] = img; window.currentBgImage = img; });
+        }
+      });
+    });
+
+    // Show AI art on game over
+    const origShowGameOver = window.showGameOver;
+    document.addEventListener('gameover', async (e) => {
+      const score = e.detail ? e.detail.score : parseInt(document.getElementById('final-score').textContent) || 0;
+      const activeSkin = document.querySelector('.skin-btn.active')?.dataset.skin || 'classic';
+      const artEl = document.getElementById('game-over-art');
+      artEl.style.display = 'block';
+      artEl.src = getPollinationsUrl(`defeated pixel art snake, game over, score ${score}, ${activeSkin} theme`, 80, 80, score);
+    });
+  </script>
 </body>
 </html>
